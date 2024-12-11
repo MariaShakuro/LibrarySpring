@@ -3,12 +3,13 @@ package com.example.library.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 @Configuration
-public class WebClientConfig implements WebMvcConfigurer {
+public class WebClientConfig {
 
     @Bean
-    public WebClient webClient(Long id){
+    public WebClient webClient() {
         return WebClient.builder().build();
     }
+
 }

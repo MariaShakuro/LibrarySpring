@@ -25,6 +25,7 @@ public class ResponseRestController {
     List<Book>getAllBooks(){
         return bookService.getAllBooks();
     }
+
     @GetMapping("/{id}")
    ResponseEntity<Book>getBookById(@PathVariable Long id) {
         Optional<Book>book=bookService.getBookById(id);
@@ -39,8 +40,7 @@ public class ResponseRestController {
     Mono<ResponseEntity<?>> addBook(@RequestBody Book book) {
         try{
             Book createdBook=bookService.addBook(book);
-            return bookService.notifyBook(createdBook.getId(),createdBook)
-                    .then(Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(createdBook)));
+            return Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(createdBook));
         }catch(IllegalArgumentException e){
             return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()));
         }catch(Exception e){
