@@ -1,112 +1,132 @@
 package controller;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+import java.util.Collections;
 
 import com.example.library.controller.ResponseRestController;
 import com.example.library.entity.Book;
 import com.example.library.service.BookService;
+import com.example.library.service.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Mono;
-import java.util.Optional;
-import static org.mockito.Mockito.*;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(ResponseRestController.class)
+@ExtendWith(SpringExtension.class)
 public class ResponseRestControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+
     private BookService bookService;
 
-    @Autowired
-    private WebTestClient webTestClient;
+    private String validToken = "valid-jwt-token";
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAllBooks() {
-        webTestClient.get().uri("/api/books")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBodyList(Book.class);
+    @WithMockUser(roles = {"USER", "ADMIN"})
+    void testGetAllBooks() throws Exception, UnauthorizedException {
+        when(bookService.getAllBooks(anyString())).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/books")
+                        .header("Authorization", "Bearer " + validToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    public void testGetBookById() {
-        Long bookId = 1L;
-        Book book = new Book(bookId, "1234567890", "Test Book", "Fiction", "Test Description", "Test Author");
+    @WithMockUser(roles = {"USER", "ADMIN"})
+    void testGetBookById() throws Exception, UnauthorizedException {
+        Book book = new Book();
+        book.setId(1L);
 
-        when(bookService.getBookById(bookId)).thenReturn(Optional.of(book));
+        when(bookService.getBookById(eq(1L), anyString())).thenReturn(Optional.of(book));
 
-        webTestClient.get().uri("/api/books/{id}", bookId)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(Book.class)
-                .isEqualTo(book);
+        mockMvc.perform(get("/api/books/{id}", 1L)
+                        .header("Authorization", "Bearer " + validToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1L));
     }
 
     @Test
-    public void testGetBookByIsbn() {
-        String isbn = "1234567890";
-        Book book = new Book(1L, isbn, "Test Book", "Fiction", "Test Description", "Test Author");
+    @WithMockUser(roles = {"USER", "ADMIN"})
+    void testGetBookByIsbn() throws Exception, UnauthorizedException {
+        Book book = new Book();
+        book.setIsbn("123");
 
-        when(bookService.getBookByIsbn(isbn)).thenReturn(Optional.of(book));
+        when(bookService.getBookByIsbn(eq("123"), anyString())).thenReturn(Optional.of(book));
 
-        webTestClient.get().uri("/api/books/isbn/{isbn}", isbn)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(Book.class)
-                .isEqualTo(book);
+        mockMvc.perform(get("/api/books/isbn/{isbn}", "123")
+                        .header("Authorization", "Bearer " + validToken))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.isbn").value("123"));
     }
 
     @Test
-    public void testAddBook() {
-        Book book = new Book(1L, "1234567890", "Test Book", "Fiction", "Test Description", "Test Author");
+    @WithMockUser(roles = {"ADMIN"})
+    void testAddBook() throws Exception, UnauthorizedException {
+        Book book = new Book();
+        book.setIsbn("123");
 
-        when(bookService.addBook(any(Book.class))).thenReturn(book);
-        when(bookService.notifyBook(anyLong(), any(Book.class))).thenReturn(Mono.empty());
+        when(bookService.addBook(any(Book.class), anyString())).thenReturn(book);
 
-        webTestClient.post().uri("/api/books")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(book)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(Book.class)
-                .isEqualTo(book);
+        mockMvc.perform(post("/api/books")
+                        .header("Authorization", "Bearer " + validToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"isbn\": \"123\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.isbn").value("123"));
     }
 
     @Test
-    public void testUpdateBook() {
-        Long bookId = 1L;
-        Book book = new Book(bookId, "1234567890", "Test Book", "Fiction", "Test Description", "Test Author");
+    @WithMockUser(roles = {"ADMIN"})
+    void testUpdateBook() throws Exception, UnauthorizedException {
+        Book book = new Book();
+        book.setId(1L);
 
-        when(bookService.getBookById(bookId)).thenReturn(Optional.of(book));
-        when(bookService.updateBook(anyLong(), any(Book.class))).thenReturn(book);
+        when(bookService.getBookById(eq(1L), anyString())).thenReturn(Optional.of(book));
+        when(bookService.updateBook(eq(1L), any(Book.class), anyString())).thenReturn(book);
 
-        webTestClient.patch().uri("/api/books/{id}", bookId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(book)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(Book.class)
-                .isEqualTo(book);
+        mockMvc.perform(patch("/api/books/{id}", 1L)
+                        .header("Authorization", "Bearer " + validToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Updated Name\"}"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void testDeleteBook() {
-        Long bookId = 1L;
+    @WithMockUser(roles = {"ADMIN"})
+    void testDeleteBook() throws Exception, UnauthorizedException {
+        Book book = new Book();
+        book.setId(1L);
 
-        when(bookService.getBookById(bookId)).thenReturn(Optional.of(new Book()));
-        doNothing().when(bookService).deleteBook(bookId);
+        when(bookService.getBookById(eq(1L), anyString())).thenReturn(Optional.of(book));
+        doNothing().when(bookService).deleteBook(eq(1L), anyString());
 
-        webTestClient.delete().uri("/api/books/{id}", bookId)
-                .exchange()
-                .expectStatus().isNoContent();
+        mockMvc.perform(delete("/api/books/{id}", 1L)
+                        .header("Authorization", "Bearer " + validToken))
+                .andExpect(status().isNoContent());
     }
 }
+
