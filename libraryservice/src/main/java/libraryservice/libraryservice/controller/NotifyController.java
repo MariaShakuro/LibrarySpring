@@ -1,42 +1,49 @@
 package libraryservice.libraryservice.controller;
 
+import libraryservice.libraryservice.dto.BookInfoDTO;
 import libraryservice.libraryservice.entity.BookInfo;
 import libraryservice.libraryservice.service.BookInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/freebooks")
+@RequestMapping("/api/book_info")
 public class NotifyController {
     @Autowired
     private BookInfoService bookInfoService;
-   /* @GetMapping("/{idBook}")
-    public ResponseEntity<BookInfo> getBookInfo(@RequestBody Book idBook) {
-        try {
-            BookInfo bookInfo = bookInfoService.getBookInfoById(idBook.getId());
-            return ResponseEntity.ok(bookInfo);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }*/
-    @GetMapping
-    public ResponseEntity<List<BookInfo>>getAllBookInfo(){
-        List<BookInfo>booksInfo=bookInfoService.getAllBookInfo();
-        return ResponseEntity.ok(booksInfo);
+
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @GetMapping("/available")
+    public ResponseEntity<List<BookInfoDTO>> getAvailableBooks(@RequestHeader("Authorization")String token) {
+        List<BookInfoDTO> availableBooks = bookInfoService.getAvailableBooks(token);
+        return ResponseEntity.ok(availableBooks);
     }
-    @PostMapping
-    public ResponseEntity<Void>receiveBookInfo(@RequestBody Long idBook){
-        bookInfoService.saveBookInfo(idBook);
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/updateStatus")
+    public ResponseEntity<Void> updateBookStatus(@RequestHeader("Authorization")String token, @RequestBody BookInfoDTO bookInfoDTO) {
+        bookInfoService.updateBookStatus(token,bookInfoDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-   @PatchMapping("/{idBook}")
-    public ResponseEntity<BookInfo> updateBookInfo(@PathVariable Long idBook, @RequestBody BookInfo details){
+
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @GetMapping
+    public ResponseEntity<List<BookInfo>>getAllBookInfo(@RequestHeader("Authorization")String token){
+        List<BookInfo>booksInfo=bookInfoService.getAllBookInfo(token);
+        return ResponseEntity.ok(booksInfo);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+   @PatchMapping("/{bookId}")
+    public ResponseEntity<BookInfo> updateBookInfo(@PathVariable Long bookId, @RequestBody BookInfo details){
         try{
-            BookInfo updatedBook=bookInfoService.updateBookInfo(idBook,details);
+            BookInfo updatedBook=bookInfoService.updateBookInfo(bookId,details);
             return ResponseEntity.ok(updatedBook);
         }catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

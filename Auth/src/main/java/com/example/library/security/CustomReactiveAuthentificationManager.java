@@ -2,8 +2,9 @@ package com.example.library.security;
 
 import com.example.library.Exception.UnauthorizedException;
 import com.example.library.entity.UserEntity;
-import com.example.library.repository.UserRepository;
 import com.example.library.service.UserService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -12,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class AuthenticationManager implements ReactiveAuthenticationManager {
+public class CustomReactiveAuthentificationManager implements ReactiveAuthenticationManager {
     private final UserService userService;
 
     @Override
@@ -24,3 +25,5 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
                 .map(user->authentication);
     }
 }
+
+

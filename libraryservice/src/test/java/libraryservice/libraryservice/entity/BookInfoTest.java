@@ -15,12 +15,10 @@ public class BookInfoTest {
     public void testGettersAndSetters() {
         BookInfo bookInfo = new BookInfo();
         bookInfo.setId(1L);
-        bookInfo.setIdBook(2L);
         bookInfo.setBorrowTime(LocalDateTime.of(2024, 12, 5, 10, 0));
         bookInfo.setReturnTime(LocalDateTime.of(2024, 12, 12, 10, 0));
 
         assertEquals(1L, bookInfo.getId());
-        assertEquals(2L, bookInfo.getIdBook());
         assertEquals(LocalDateTime.of(2024, 12, 5, 10, 0), bookInfo.getBorrowTime());
         assertEquals(LocalDateTime.of(2024, 12, 12, 10, 0), bookInfo.getReturnTime());
     }
@@ -29,19 +27,18 @@ public class BookInfoTest {
     public void testEqualsAndHashCode() {
         BookInfo bookInfo1 = new BookInfo();
         bookInfo1.setId(1L);
-        bookInfo1.setIdBook(2L);
         bookInfo1.setBorrowTime(LocalDateTime.of(2024, 12, 5, 10, 0));
         bookInfo1.setReturnTime(LocalDateTime.of(2024, 12, 12, 10, 0));
 
         BookInfo bookInfo2 = new BookInfo();
         bookInfo2.setId(1L);
-        bookInfo2.setIdBook(2L);
+
         bookInfo2.setBorrowTime(LocalDateTime.of(2024, 12, 5, 10, 0));
         bookInfo2.setReturnTime(LocalDateTime.of(2024, 12, 12, 10, 0));
 
         BookInfo bookInfo3 = new BookInfo();
         bookInfo3.setId(2L);
-        bookInfo3.setIdBook(3L);
+
         bookInfo3.setBorrowTime(LocalDateTime.of(2024, 12, 6, 10, 0));
         bookInfo3.setReturnTime(LocalDateTime.of(2024, 12, 13, 10, 0));
 
@@ -55,7 +52,7 @@ public class BookInfoTest {
     public void testToString() {
         BookInfo bookInfo = new BookInfo();
         bookInfo.setId(1L);
-        bookInfo.setIdBook(2L);
+
         bookInfo.setBorrowTime(LocalDateTime.of(2024, 12, 5, 10, 0));
         bookInfo.setReturnTime(LocalDateTime.of(2024, 12, 12, 10, 0));
 

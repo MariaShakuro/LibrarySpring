@@ -12,22 +12,29 @@ import com.example.library.service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthRestControllerV1 {
   private  final SecurityService securityService;
   private final UserService userService;
   private final UserMapper userMapper;
+  @Autowired
+  public AuthRestControllerV1(SecurityService securityService,UserService userService,
+                              UserMapper userMapper){
+      this.securityService=securityService;
+      this.userService=userService;
+      this.userMapper=userMapper;
+  }
   @PostMapping("/register")
   public Mono<UserDTO>register(@RequestBody UserDTO userDTO){
       UserEntity entity=userMapper.map(userDTO);
-      return userService.registerUser(entity)
+      return userService.register(entity)
               .map(userMapper::map);
   }
   @PostMapping("/login")
