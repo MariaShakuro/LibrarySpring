@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+
 
 
 import java.awt.print.Book;
@@ -37,8 +37,12 @@ public class BookInfoService {
             List<BookInfo> availableBooks = bookInfoRepository.findByStatus("available");
             logger.info("Found " + availableBooks.size() + " available books");
             List<BookInfoDTO>availableBookDTOs=availableBooks.stream()
-                    .map(book -> new BookInfoDTO(book.getBookId(), book.getStatus(),
-                            book.getBorrowTime(), book.getReturnTime(),book.getIsDeleted()))
+                    .map(book -> new BookInfoDTO(
+                            book.getBookId(),
+                            book.getStatus(),
+                            book.getBorrowTime() !=null ? book.getBorrowTime() : LocalDateTime.now(),
+                            book.getReturnTime() !=null ? book.getReturnTime() : LocalDateTime.now().plusWeeks(2),
+                            book.getIsDeleted()))
                     .collect(Collectors.toList());
             return availableBookDTOs;
         }else{

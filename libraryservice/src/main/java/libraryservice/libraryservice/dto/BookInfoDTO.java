@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
+
 public class BookInfoDTO {
     private Long bookId;
     private String status;
@@ -16,10 +16,11 @@ public class BookInfoDTO {
                         LocalDateTime returnTime,Boolean isDeleted){
         this.bookId=bookId;
         this.status=status;
-        this.borrowTime=borrowTime;
-        this.returnTime=returnTime;
+        this.borrowTime=borrowTime !=null ? borrowTime : LocalDateTime.now();
+        this.returnTime=returnTime !=null ? returnTime : LocalDateTime.now().plusWeeks(2);
         this.isDeleted=isDeleted;
     }
+    public BookInfoDTO(){}
 
     public void setBookId(Long bookId) {
         this.bookId = bookId;

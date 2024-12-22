@@ -2,6 +2,7 @@ package libraryservice.libraryservice.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Arrays;
@@ -28,9 +29,11 @@ public class BookInfoServiceTest {
 
     @InjectMocks
     private BookInfoService bookInfoService;
-
+    private BookInfo bookInfo;
     @BeforeEach
     void setUp() {
+        bookInfo=new BookInfo();
+        bookInfo.setBookId(1L);
     }
 
     @Test
@@ -116,15 +119,21 @@ public class BookInfoServiceTest {
     void testUpdateBookInfo() {
         Long id = 1L;
         BookInfo details = new BookInfo();
-        details.setStatus("taken");
-        BookInfo bookInfo = new BookInfo();
+        details.setBorrowTime(LocalDateTime.now());
+        details.setReturnTime(LocalDateTime.now().plusWeeks(2));
+        details.setStatus("available");
+
 
         when(bookInfoRepository.findById(id)).thenReturn(Optional.of(bookInfo));
+        when(bookInfoRepository.save(bookInfo)).thenReturn(bookInfo);
 
         BookInfo updatedBookInfo = bookInfoService.updateBookInfo(id, details);
 
         assertNotNull(updatedBookInfo);
-        assertEquals("taken", updatedBookInfo.getStatus());
+        assertEquals("available", updatedBookInfo.getStatus());
+        assertNotNull(updatedBookInfo.getBorrowTime());
+        assertNotNull(updatedBookInfo.getReturnTime());
+        verify(bookInfoRepository,times(1)).findById(bookInfo.getBookId());
         verify(bookInfoRepository, times(1)).save(bookInfo);
     }
 }

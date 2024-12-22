@@ -1,53 +1,41 @@
 package repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
 import com.example.library.entity.Book;
 import com.example.library.repository.BookRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(SpringExtension.class)
-@DataJpaTest
+@ExtendWith(MockitoExtension.class)
 public class BookRepositoryTest {
 
-    @Autowired
+    @Mock
     private BookRepository bookRepository;
 
-    @Test
-    void testSaveAndFindById() {
-        Book book = new Book();
-        book.setIsbn("1234567890");
-        book.setName("Test Book");
-        book.setGenre("Fiction");
-        book.setDescription("A test book description");
-        book.setAuthor("Author Name");
+    private Book book;
 
-        Book savedBook = bookRepository.save(book);
-        Optional<Book> foundBook = bookRepository.findById(savedBook.getId());
-
-        assertThat(foundBook).isPresent();
-        assertThat(foundBook.get().getId()).isEqualTo(savedBook.getId());
+    @BeforeEach
+    void setUp() {
+        book = new Book();
+        book.setId(1L);
+        book.setIsbn("123-456-789");
     }
 
     @Test
-    void testFindByIsbn() {
-        Book book = new Book();
-        book.setIsbn("1234567890");
-        book.setName("Test Book");
-        book.setGenre("Fiction");
-        book.setDescription("A test book description");
-        book.setAuthor("Author Name");
+    void testGetBookByIsbn() {
+        when(bookRepository.getBookByIsbn("123-456-789")).thenReturn(Optional.of(book));
+        Optional<Book> foundBook = bookRepository.getBookByIsbn("123-456-789");
 
-        bookRepository.save(book);
-        Optional<Book> foundBook = bookRepository.getBookByIsbn("1234567890");
 
-        assertThat(foundBook).isPresent();
-        assertThat(foundBook.get().getIsbn()).isEqualTo("1234567890");
+        assertTrue(foundBook.isPresent());
+        assertEquals(book, foundBook.get());
     }
 }

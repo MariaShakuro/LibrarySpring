@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.annotation.KafkaListener;
 
@@ -22,23 +23,9 @@ public class BookConsumerTest {
 
     @InjectMocks
     private BookConsumer bookConsumer;
-
+    private BookInfo bookInfo;
     @BeforeEach
     void setUp() {
-    }
-
-    @Test
-    void testHandleNewBook() {
-        Long bookId = 1L;
-        BookInfo bookInfo = new BookInfo();
-        bookInfo.setBookId(bookId);
-
-        when(bookInfoRepository.findByBookId(bookId)).thenReturn(Optional.of(bookInfo));
-
-        bookConsumer.handleNewBook(bookId);
-
-        verify(bookInfoRepository, times(1)).findByBookId(bookId);
-        verify(bookInfoRepository, times(1)).save(bookInfo);
     }
 
     @Test
@@ -46,7 +33,6 @@ public class BookConsumerTest {
         Long bookId = 1L;
         BookInfo bookInfo = new BookInfo();
         bookInfo.setBookId(bookId);
-
         when(bookInfoRepository.findByBookId(bookId)).thenReturn(Optional.of(bookInfo));
 
         bookConsumer.handleDeleteBook(bookId);

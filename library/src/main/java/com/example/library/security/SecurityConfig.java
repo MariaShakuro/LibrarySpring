@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class SecurityConfig {
 
     @Value("${security.jwt.secret}")
-    private String jwtSecret;
+    public String jwtSecret;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,7 +58,7 @@ public class SecurityConfig {
         return new CustomJwtAuthenticationConverter();
     }
 
-    private static class CustomJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+    public static class CustomJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
         @Override
         public AbstractAuthenticationToken convert(Jwt jwt) {

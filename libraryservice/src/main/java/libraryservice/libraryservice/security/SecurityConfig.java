@@ -1,5 +1,6 @@
 package libraryservice.libraryservice.security;
 
+
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,13 +25,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Value("${security.jwt.secret}")
-    private String jwtSecret;
+    public String jwtSecret;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,7 +61,7 @@ public class SecurityConfig {
         return new CustomJwtAuthenticationConverter();
     }
 
-    private static class CustomJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+    public  static class CustomJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
         @Override
         public AbstractAuthenticationToken convert(Jwt jwt) {
@@ -75,5 +78,13 @@ public class SecurityConfig {
         }
     }
 }
+
+
+
+
+
+
+
+
 
 

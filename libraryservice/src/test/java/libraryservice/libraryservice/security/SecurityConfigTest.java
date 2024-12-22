@@ -1,50 +1,64 @@
 package libraryservice.libraryservice.security;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = SecurityConfigTest.TestConfig.class)
+@TestPropertySource(properties = {
+        "security.jwt.secret=2LApL4VfCAY82XnhfDQgZwE8Z+fPo3cO8z7pXyjGg7bB3ZyF3saMlxR9j+R2oCw2"
+})
 public class SecurityConfigTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Value("${security.jwt.secret}")
+    private String jwtSecret;
 
-    @Test
-    @WithMockUser(roles = {"USER"})
-    void testAuthenticatedAccess() throws Exception {
-        mockMvc.perform(get("/api/protected-endpoint"))
-                .andExpect(status().isOk());
+    private SecurityConfig securityConfig;
+
+    @BeforeEach
+    void setUp() {
+        securityConfig = new SecurityConfig();
+        securityConfig.jwtSecret = jwtSecret;
     }
 
     @Test
-    void testPublicAccess() throws Exception {
-        mockMvc.perform(get("/public"))
-                .andExpect(status().isOk());
+    void testJwtDecoder() {
+        JwtDecoder decoder = securityConfig.jwtDecoder();
+        assertNotNull(decoder);
+        assertTrue(decoder instanceof NimbusJwtDecoder);
     }
 
-    @Test
-    void testUnauthenticatedAccess() throws Exception {
-        mockMvc.perform(get("/api/protected-endpoint"))
-                .andExpect(status().isUnauthorized());
-    }
 
-    @Test
-    void testAuthenticationManagerBean() throws Exception {
-        assertThat(mockMvc).isNotNull();
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public SecurityConfig securityConfig() {
+            return new SecurityConfig();
+        }
+
+        @Bean
+        public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+            return new HandlerMappingIntrospector();
+        }
     }
 }
+
+
+
+

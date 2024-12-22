@@ -1,12 +1,13 @@
 package jwtSecurity.example.jwtDemo.Controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import jwtSecurity.example.jwtDemo.Config.JwtTokenProvider;
+import jwtSecurity.example.jwtDemo.Dto.AuthResponseDto;
 import jwtSecurity.example.jwtDemo.Dto.LoginDto;
 import jwtSecurity.example.jwtDemo.Service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,27 +15,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(AuthController.class)
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-
+    @Mock
     private AuthService authService;
 
-
+    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
     @InjectMocks
@@ -44,6 +41,8 @@ public class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
         objectMapper = new ObjectMapper();
     }
 
@@ -53,8 +52,11 @@ public class AuthControllerTest {
         loginDto.setUsername("testuser");
         loginDto.setPassword("password");
 
-        String token = "mock-token";
+        String token = "testToken";
         when(authService.login(any(LoginDto.class))).thenReturn(token);
+
+        AuthResponseDto authResponseDto = new AuthResponseDto();
+        authResponseDto.setAccessToken(token);
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -65,12 +67,12 @@ public class AuthControllerTest {
 
     @Test
     void testValidateToken() throws Exception {
-        String token = "Bearer mock-token";
-        when(jwtTokenProvider.validateToken("mock-token")).thenReturn(true);
+        String token = "Bearer testToken";
+        when(jwtTokenProvider.validateToken(anyString())).thenReturn(true);
 
         mockMvc.perform(get("/api/auth/validate")
                         .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(true));
+                .andExpect(content().string("true"));
     }
 }

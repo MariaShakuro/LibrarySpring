@@ -1,51 +1,47 @@
 package security;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.example.library.security.SecurityConfig;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import com.example.library.LibraryApplication;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = LibraryApplication.class)
+@TestPropertySource(properties = {
+        "security.jwt.secret=2LApL4VfCAY82XnhfDQgZwE8Z+fPo3cO8z7pXyjGg7bB3ZyF3saMlxR9j+R2oCw2"
+})
 public class SecurityConfigTest {
-
-    private JwtDecoder jwtDecoder;
-    @Autowired
-    private WebApplicationContext context;
-
-    private MockMvc mockMvc;
-
-    @InjectMocks
-    private SecurityConfig securityConfig;
 
     @Value("${security.jwt.secret}")
     private String jwtSecret;
 
+    private final SecurityConfig securityConfig = new SecurityConfig();
 
+    @Test
+    void testJwtDecoder() {
 
+        securityConfig.jwtSecret = jwtSecret;
+        JwtDecoder decoder = securityConfig.jwtDecoder();
+
+        assertNotNull(decoder);
+        assertTrue(decoder instanceof NimbusJwtDecoder);
+    }
 }
+
+
+
+
+
+
+
+
+
