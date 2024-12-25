@@ -1,9 +1,6 @@
 package libraryservice.libraryservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.Version;
 
@@ -19,10 +16,15 @@ public class BookInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long bookId;
+
     private String status;
+
     private LocalDateTime borrowTime;
+
     private LocalDateTime returnTime;
+
    private Boolean isDeleted=false;
    public  void setIsDeleted(Boolean isDeleted){
        this.isDeleted=isDeleted;

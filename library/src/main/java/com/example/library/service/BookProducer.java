@@ -18,8 +18,13 @@ public class BookProducer {
     }
 
     public void sendBookEvent(String topic,Long bookId) {
-        kafkaTemplate.send(topic, bookId);
         logger.info("Sent message to Kafka with book ID: " + bookId);
+        kafkaTemplate.send(topic, bookId).whenComplete((result,ex)->{
+            if (ex == null) {
+                logger.info("Message sent successfully to topic: {}", topic);}
+            else { logger.error("Failed to send message to topic: {}", topic, ex); }
+                }
+        );
     }
 }
 

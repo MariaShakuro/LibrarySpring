@@ -1,11 +1,12 @@
 package libraryservice.libraryservice.dto;
 
 
+import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
+@Table(name="book_info")
 public class BookInfoDTO {
     private Long bookId;
     private String status;

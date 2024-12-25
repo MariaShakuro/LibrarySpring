@@ -30,14 +30,14 @@ public class BookConsumer {
                 BookInfo bookInfo = existingBookInfo.get();
                 bookInfo.setStatus("available");
                 bookInfo.setBorrowTime(LocalDateTime.now());
-                bookInfo.setReturnTime(LocalDateTime.MAX.plusWeeks(2));
+                bookInfo.setReturnTime(LocalDateTime.now().plusWeeks(2));
                 bookInfoRepository.save(bookInfo);
             } else {
                 BookInfo newBookInfo = new BookInfo();
                 newBookInfo.setBookId(bookId); // Устанавливаем bookId как bookId
                 newBookInfo.setStatus("available");
-                newBookInfo.setBorrowTime(null);
-                newBookInfo.setReturnTime(null);
+                newBookInfo.setBorrowTime(LocalDateTime.now());
+                newBookInfo.setReturnTime(LocalDateTime.now().plusWeeks(2));
                 bookInfoRepository.save(newBookInfo);
             }
             logger.info("Saved BookInfo with book ID: " + bookId);

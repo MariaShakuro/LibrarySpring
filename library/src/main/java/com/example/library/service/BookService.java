@@ -19,7 +19,7 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
     @Autowired
-    BookProducer bookProducer;
+    private BookProducer bookProducer;
     @Autowired
     private JwtAuthClient jwtAuthClient;
 
@@ -31,6 +31,7 @@ public class BookService {
                     .filter(book -> !book.isDeleted())
                     .collect(Collectors.toList());
         }else{
+            logger.error("Error retrieving books from database");
            throw new UnauthorizedException("Invalid JWT token");
         }
     }
@@ -47,18 +48,31 @@ public class BookService {
         else throw new UnauthorizedException("Invalid JWT token");
     }
     public Book addBook(Book book,String jwtToken) throws UnauthorizedException {
+        logger.info("Starting addBook method with book ISBN: {} and JWT token",book.getIsbn());
         String bearerToken = "Bearer " + jwtToken.trim();
         Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
         if (isValidToken) {
+            logger.info("JWT token is valid");
             Optional<Book> existingBook = bookRepository.getBookByIsbn(book.getIsbn());
             if (existingBook.isPresent()) {
+                logger.warn("The book with ISBN: {} already exists", book.getIsbn());
                 throw new IllegalArgumentException("The book already existed with this isbn");
             }
-            Book createdBook = bookRepository.save(book);
-            bookProducer.sendBookEvent("new-book-topic", createdBook.getId());
-
-            return createdBook;//bookRepository.save(book);
+            try {
+                logger.info("Saving new book...");
+                Book createdBook = bookRepository.save(book);
+                logger.info("Book saved successfully with ID: {}", createdBook.getId());
+                logger.info("Sending book event to Kafka...");
+                bookProducer.sendBookEvent("new-book-topic", createdBook.getId());
+                logger.info("Book event sent successfully");
+                return createdBook;
+                //bookRepository.save(book);
+            }catch(Exception e){
+                logger.error("Error saving book", e);
+                throw new RuntimeException("Error saving book", e);
+            }
         }else{
+            logger.warn("Invalid JWT token");
             throw new UnauthorizedException("Invalid JWT token");
         }
         }

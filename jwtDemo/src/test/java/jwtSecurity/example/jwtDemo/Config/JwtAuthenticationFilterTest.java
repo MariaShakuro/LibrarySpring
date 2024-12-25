@@ -35,7 +35,7 @@ public class JwtAuthenticationFilterTest {
 
     @BeforeEach
     void setUp() {
-        jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
+       jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class JwtAuthenticationFilterTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain filterChain = mock(FilterChain.class);
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
+        when(jwtTokenProvider.getTokenFromRequest(request)).thenReturn("valid-token");
         when(jwtTokenProvider.validateToken("valid-token")).thenReturn(true);
         when(jwtTokenProvider.getUsername("valid-token")).thenReturn("testuser");
 
@@ -53,6 +53,7 @@ public class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(jwtTokenProvider, times(1)).getTokenFromRequest(request);
         verify(jwtTokenProvider, times(1)).validateToken("valid-token");
         verify(jwtTokenProvider, times(1)).getUsername("valid-token");
         verify(userDetailsService, times(1)).loadUserByUsername("testuser");
@@ -65,11 +66,12 @@ public class JwtAuthenticationFilterTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain filterChain = mock(FilterChain.class);
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer invalid-token");
+        when(jwtTokenProvider.getTokenFromRequest(request)).thenReturn("invalid-token");
         when(jwtTokenProvider.validateToken("invalid-token")).thenReturn(false);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(jwtTokenProvider, times(1)).getTokenFromRequest(request);
         verify(jwtTokenProvider, times(1)).validateToken("invalid-token");
         verify(jwtTokenProvider, never()).getUsername(anyString());
         verify(userDetailsService, never()).loadUserByUsername(anyString());

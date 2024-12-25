@@ -71,7 +71,12 @@ public class BookInfoService {
         String bearerToken = "Bearer " + jwtToken.trim();
         Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
         if (isValidToken) {
-            return bookInfoRepository.findAll();
+            List<BookInfo> allBooks=bookInfoRepository.findAll();
+            allBooks.forEach(book->{
+                if (book.getBorrowTime() == null)  book.setBorrowTime(LocalDateTime.now());
+                if (book.getReturnTime() == null)  book.setReturnTime(LocalDateTime.now().plusWeeks(2));
+            });
+            return allBooks;
         }else{
             throw new UnauthorizedException("Invalid JWT token");
         }

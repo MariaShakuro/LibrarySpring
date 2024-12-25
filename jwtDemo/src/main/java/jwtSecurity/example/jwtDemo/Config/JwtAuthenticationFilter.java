@@ -19,13 +19,13 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
 
-    private UserDetailsService userDetailsService;
+    private  JwtTokenProvider jwtTokenProvider;
+
+    private  UserDetailsService userDetailsService;
 
     //Constructor
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
+    @Autowired public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
     }
@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         // Get JWT token from HTTP request
-        String token = getTokenFromRequest(request);
+        String token = jwtTokenProvider.getTokenFromRequest(request);
 
         // Validate Token
         if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)){
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // Extract the token
-    private String getTokenFromRequest(HttpServletRequest request){
+  /*  private String getTokenFromRequest(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
 
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
@@ -71,5 +71,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         return null;
-    }
+    }*/
 }

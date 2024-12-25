@@ -4,33 +4,41 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: dsova2207_12
-      MYSQL_DATABASE: first_connection
     ports:
-      - "3306:3306"
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - libraryspring_app-network
 
   zookeeper:
-    image: zookeeper:3.6.3
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    networks:
+      - libraryspring_app-network
 
 
   kafka:
-    image: apache/kafka:latest
+    image: confluentinc/cp-kafka:latest
     ports:
       - "9092:9092"
-      - "9093:9093"
     environment:
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_NODE_ID: 1
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://localhost:9093
-      KAFKA_LOG_DIRS: C:/Kafka/kafka_2.13-3.9.0/kafka-logs
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes:
-     - ./kafka-config:/opt/kafka/config
+      - ./kafka-config:/opt/kafka/config
+      - kafka_logs:/var/lib/kafka/logs
     depends_on:
       - zookeeper
+    networks:
+        - libraryspring_app-network
 
 
   library:
@@ -40,15 +48,16 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/library
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=dsova2207_12
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+       SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/library"
+       SPRING_DATASOURCE_USERNAME: "root"
+       SPRING_DATASOURCE_PASSWORD: "dsova2207_12"
+       SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+       KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
     depends_on:
       - mysql
       - kafka
-
+    networks:
+      - libraryspring_app-network
 
   libraryservice:
     build:
@@ -57,15 +66,16 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/freebookservice
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=dsova2207_12
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+       SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/freebookservice"
+       SPRING_DATASOURCE_USERNAME: "root"
+       SPRING_DATASOURCE_PASSWORD: "dsova2207_12"
+       SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+       KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
     depends_on:
       - mysql
       - kafka
-
+    networks:
+      - libraryspring_app-network
 
   jwtDemo:
     build:
@@ -74,9 +84,18 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/security_db
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=dsova2207_12
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+       SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/security_db"
+       SPRING_DATASOURCE_USERNAME: "root"
+       SPRING_DATASOURCE_PASSWORD: "dsova2207_12"
+       SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
     depends_on:
       - mysql
+    networks:
+      - libraryspring_app-network
+volumes:
+ mysql_data:
+ kafka_logs:
+
+networks:
+ libraryspring_app-network:
+  driver: bridge
