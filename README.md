@@ -10,13 +10,17 @@
 Если нет,то вот [ссылка](https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip)
 
 **3.Переходим в IDE **
+
 В терминале:
 
 Сначала надо собрать jar каждого сервиса(library,jwtDemo,libraryservice):
 
 ```cd jwtDemo```
+
 ```mvn clean install```
+
 Возвращаемся обратно:
+
 ```cd ..```
 
 И проделываем так со всеми тремя
@@ -39,4 +43,6 @@
 ```docker-compose down```
 
 !!!Для отслеживания рекоммендую скачать:[Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
 !!!Также мои images лежат на Docker Hub:[Мой репозиторий](https://hub.docker.com/repository/docker/shakuro895/spring/general)
+
