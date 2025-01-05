@@ -41,18 +41,13 @@
 Если вы хотите иметь доступ ко всем функциям библиотеки,то в login нужно будет указать:```username: "shakuro",
                                                                                            password: "123456"```
                                                                                            
-  1.Скопируйте URL коллекции с GitHub
+  1.Импортируем коллекцию в Postman
   
-    1)Копируем URL-адрес файла:BooksAPI.postman_collection.json:
-    ```http://github.com/пользователь/репозиторий/BooksAPI.postman_collection.json```
+    1)Откройте Postman.
+    2)Нажмите на кнопку Import в левом верхнем углу.
+    Появится окошко:![image](https://github.com/user-attachments/assets/b9a189e8-74e7-4e62-8c4c-86549d748700)
+    Нажмите в середине на **files** и нажмите на  BooksAPI.postman_collection.json(которое находится в моем проекте в папке,в которую вы скопировали мой проект
     
-  2.Импортируйте коллекцию в Postman
-  
-     1)Откройте Postman и нажмите кнопку "Import" в верхнем левом углу
-     2)Выберите вкладку "Link"
-     3)Вставьте URL-адрес файла коллекции JSON
-     4)Нажмите "Continue" и затем "Import"
-
 
 **5.Закрываем программу**
 ```docker-compose down```
