@@ -1,6 +1,6 @@
 package libraryservice.libraryservice.controller;
 
-import libraryservice.libraryservice.dto.BookInfoDTO;
+import libraryservice.libraryservice.dto.BookInfoDto;
 import libraryservice.libraryservice.entity.BookInfo;
 import libraryservice.libraryservice.service.BookInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,13 @@ public class NotifyController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/available")
-    public ResponseEntity<List<BookInfoDTO>> getAvailableBooks(@RequestHeader("Authorization")String token) {
-        List<BookInfoDTO> availableBooks = bookInfoService.getAvailableBooks(token);
+    public ResponseEntity<List<BookInfoDto>> getAvailableBooks(@RequestHeader("Authorization")String token) {
+        List<BookInfoDto> availableBooks = bookInfoService.getAvailableBooks(token);
         return ResponseEntity.ok(availableBooks);
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/updateStatus")
-    public ResponseEntity<Void> updateBookStatus(@RequestHeader("Authorization")String token, @RequestBody BookInfoDTO bookInfoDTO) {
+    public ResponseEntity<Void> updateBookStatus(@RequestHeader("Authorization")String token, @RequestBody BookInfoDto bookInfoDTO) {
         bookInfoService.updateBookStatus(token,bookInfoDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -34,8 +34,8 @@ public class NotifyController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
-    public ResponseEntity<List<BookInfo>>getAllBookInfo(@RequestHeader("Authorization")String token){
-        List<BookInfo>booksInfo=bookInfoService.getAllBookInfo(token);
+    public ResponseEntity<List<BookInfo>>getAllBooksInfo(@RequestHeader("Authorization")String token){
+        List<BookInfo>booksInfo=bookInfoService.getAllBooksInfo(token);
         return ResponseEntity.ok(booksInfo);
     }
 

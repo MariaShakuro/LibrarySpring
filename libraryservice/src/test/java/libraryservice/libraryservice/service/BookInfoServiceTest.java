@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.Arrays;
 
 import libraryservice.libraryservice.client.JwtAuthClient;
-import libraryservice.libraryservice.dto.BookInfoDTO;
+import libraryservice.libraryservice.dto.BookInfoDto;
 import libraryservice.libraryservice.entity.BookInfo;
 import libraryservice.libraryservice.repository.BookInfoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ public class BookInfoServiceTest {
         when(jwtAuthClient.validateToken("Bearer " + validToken)).thenReturn(true);
         when(bookInfoRepository.findByStatus("available")).thenReturn(Arrays.asList(new BookInfo()));
 
-        List<BookInfoDTO> availableBooks = bookInfoService.getAvailableBooks(validToken);
+        List<BookInfoDto> availableBooks = bookInfoService.getAvailableBooks(validToken);
 
         assertNotNull(availableBooks);
         assertEquals(1, availableBooks.size());
@@ -64,7 +64,7 @@ public class BookInfoServiceTest {
     @Test
     void testUpdateBookStatus_ValidToken() {
         String validToken = "valid-jwt-token";
-        BookInfoDTO bookInfoDTO = new BookInfoDTO(1L, "available", null, null, false);
+        BookInfoDto bookInfoDTO = new BookInfoDto(1L, "available", null, null, false);
         BookInfo bookInfo = new BookInfo();
 
         when(jwtAuthClient.validateToken("Bearer " + validToken)).thenReturn(true);
@@ -79,7 +79,7 @@ public class BookInfoServiceTest {
     @Test
     void testUpdateBookStatus_InvalidToken() {
         String invalidToken = "invalid-jwt-token";
-        BookInfoDTO bookInfoDTO = new BookInfoDTO(1L, "available", null, null, false);
+        BookInfoDto bookInfoDTO = new BookInfoDto(1L, "available", null, null, false);
 
         when(jwtAuthClient.validateToken("Bearer " + invalidToken)).thenReturn(false);
 
@@ -96,7 +96,7 @@ public class BookInfoServiceTest {
         when(jwtAuthClient.validateToken("Bearer " + validToken)).thenReturn(true);
         when(bookInfoRepository.findAll()).thenReturn(Arrays.asList(new BookInfo()));
 
-        List<BookInfo> bookInfos = bookInfoService.getAllBookInfo(validToken);
+        List<BookInfo> bookInfos = bookInfoService.getAllBooksInfo(validToken);
 
         assertNotNull(bookInfos);
         assertEquals(1, bookInfos.size());
@@ -109,7 +109,7 @@ public class BookInfoServiceTest {
         when(jwtAuthClient.validateToken("Bearer " + invalidToken)).thenReturn(false);
 
         assertThrows(UnauthorizedException.class, () -> {
-            bookInfoService.getAllBookInfo(invalidToken);
+            bookInfoService.getAllBooksInfo(invalidToken);
         });
 
         verify(bookInfoRepository, never()).findAll();

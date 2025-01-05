@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -18,13 +17,9 @@ public class BookInfo {
     private Long id;
 
     private Long bookId;
-
     private String status;
-
     private LocalDateTime borrowTime;
-
     private LocalDateTime returnTime;
-
    private Boolean isDeleted=false;
    public  void setIsDeleted(Boolean isDeleted){
        this.isDeleted=isDeleted;

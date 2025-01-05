@@ -2,21 +2,17 @@ package libraryservice.libraryservice.service;
 
 
 import libraryservice.libraryservice.client.JwtAuthClient;
-import libraryservice.libraryservice.dto.BookInfoDTO;
+import libraryservice.libraryservice.dto.BookInfoDto;
 import libraryservice.libraryservice.entity.BookInfo;
 import libraryservice.libraryservice.repository.BookInfoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 
-
-import java.awt.print.Book;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -30,14 +26,14 @@ public class BookInfoService {
 
 
 
-    public List<BookInfoDTO> getAvailableBooks(String jwtToken) {
+    public List<BookInfoDto> getAvailableBooks(String jwtToken) {
         String bearerToken = "Bearer " + jwtToken.trim();
         Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
         if (isValidToken) {
             List<BookInfo> availableBooks = bookInfoRepository.findByStatus("available");
             logger.info("Found " + availableBooks.size() + " available books");
-            List<BookInfoDTO>availableBookDTOs=availableBooks.stream()
-                    .map(book -> new BookInfoDTO(
+            List<BookInfoDto>availableBookDTOs=availableBooks.stream()
+                    .map(book -> new BookInfoDto(
                             book.getBookId(),
                             book.getStatus(),
                             book.getBorrowTime() !=null ? book.getBorrowTime() : LocalDateTime.now(),
@@ -50,7 +46,7 @@ public class BookInfoService {
         }
     }
 
-    public void updateBookStatus(String jwtToken,BookInfoDTO bookInfoDTO){
+    public void updateBookStatus(String jwtToken, BookInfoDto bookInfoDTO){
         String bearerToken = "Bearer " + jwtToken.trim();
         Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
         if (isValidToken) {
@@ -67,7 +63,7 @@ public class BookInfoService {
         }
     }
 
-    public List<BookInfo>getAllBookInfo(String jwtToken){
+    public List<BookInfo>getAllBooksInfo(String jwtToken){
         String bearerToken = "Bearer " + jwtToken.trim();
         Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
         if (isValidToken) {

@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Collections;
 
-import libraryservice.libraryservice.dto.BookInfoDTO;
+import libraryservice.libraryservice.dto.BookInfoDto;
 import libraryservice.libraryservice.service.BookInfoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class NotifyControllerTest {
     @WithMockUser(roles = {"USER"})
     void testGetAvailableBooks() throws Exception {
         String token = "valid-token";
-        BookInfoDTO bookInfoDTO = new BookInfoDTO();
+        BookInfoDto bookInfoDTO = new BookInfoDto();
         bookInfoDTO.setBookId(1L);
         bookInfoDTO.setStatus("available");
 

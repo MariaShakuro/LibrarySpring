@@ -3,7 +3,7 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: dsova2207_12
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
@@ -49,8 +49,8 @@ services:
       - "8080:8080"
     environment:
        SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/library"
-       SPRING_DATASOURCE_USERNAME: "root"
-       SPRING_DATASOURCE_PASSWORD: "dsova2207_12"
+       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
        SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
        KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
     depends_on:
@@ -67,8 +67,8 @@ services:
       - "8082:8082"
     environment:
        SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/freebookservice"
-       SPRING_DATASOURCE_USERNAME: "root"
-       SPRING_DATASOURCE_PASSWORD: "dsova2207_12"
+       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
        SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
        KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
     depends_on:
@@ -77,16 +77,16 @@ services:
     networks:
       - libraryspring_app-network
 
-  jwtDemo:
+  jwtdemo:
     build:
-      context: ./jwtDemo
+      context: ./jwtdemo
     image: jwtdemo
     ports:
       - "8083:8083"
     environment:
        SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/security_db"
-       SPRING_DATASOURCE_USERNAME: "root"
-       SPRING_DATASOURCE_PASSWORD: "dsova2207_12"
+       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
        SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
     depends_on:
       - mysql
