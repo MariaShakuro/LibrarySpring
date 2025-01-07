@@ -32,9 +32,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    volumes:
-      - ./kafka-config:/opt/kafka/config
-      - kafka_logs:/var/lib/kafka/logs
     depends_on:
       - zookeeper
     networks:
@@ -94,7 +91,6 @@ services:
       - libraryspring_app-network
 volumes:
  mysql_data:
- kafka_logs:
 
 networks:
  libraryspring_app-network:

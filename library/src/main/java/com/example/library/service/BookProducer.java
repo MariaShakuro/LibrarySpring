@@ -1,5 +1,6 @@
 package com.example.library.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,9 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@Slf4j
 public class BookProducer {
-    private static final Logger logger= LoggerFactory.getLogger(BookProducer.class);
+
     private final KafkaTemplate<String, Long> kafkaTemplate;
 
     @Autowired
@@ -18,12 +20,8 @@ public class BookProducer {
     }
 
     public void sendBookEvent(String topic,Long bookId) {
-        logger.info("Sent message to Kafka with book ID: " + bookId);
-        kafkaTemplate.send(topic, bookId).whenComplete((result,ex)->{
-            if (ex == null) {
-                logger.info("Message sent successfully to topic: {}", topic);}
-            else { logger.error("Failed to send message to topic: {}", topic, ex); }
-                }
+        log.info("Sent message to Kafka with book ID: " + bookId);
+        kafkaTemplate.send(topic, bookId).whenComplete((result,ex)->{}
         );
     }
 }

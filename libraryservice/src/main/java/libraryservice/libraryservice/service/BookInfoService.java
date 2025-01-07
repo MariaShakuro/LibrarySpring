@@ -5,6 +5,7 @@ import libraryservice.libraryservice.client.JwtAuthClient;
 import libraryservice.libraryservice.dto.BookInfoDto;
 import libraryservice.libraryservice.entity.BookInfo;
 import libraryservice.libraryservice.repository.BookInfoRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 public class BookInfoService {
-    private static final Logger logger= LoggerFactory.getLogger(BookInfoService.class);
     @Autowired
     private BookInfoRepository bookInfoRepository;
     @Autowired
@@ -31,7 +31,7 @@ public class BookInfoService {
         Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
         if (isValidToken) {
             List<BookInfo> availableBooks = bookInfoRepository.findByStatus("available");
-            logger.info("Found " + availableBooks.size() + " available books");
+            log.info("Found " + availableBooks.size() + " available books");
             List<BookInfoDto>availableBookDTOs=availableBooks.stream()
                     .map(book -> new BookInfoDto(
                             book.getBookId(),
@@ -67,12 +67,11 @@ public class BookInfoService {
         String bearerToken = "Bearer " + jwtToken.trim();
         Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
         if (isValidToken) {
-            List<BookInfo> allBooks=bookInfoRepository.findAll();
-            allBooks.forEach(book->{
+            /* allBooks.forEach(book->{
                 if (book.getBorrowTime() == null)  book.setBorrowTime(LocalDateTime.now());
                 if (book.getReturnTime() == null)  book.setReturnTime(LocalDateTime.now().plusWeeks(2));
-            });
-            return allBooks;
+            });*/
+            return bookInfoRepository.findAll();
         }else{
             throw new UnauthorizedException("Invalid JWT token");
         }

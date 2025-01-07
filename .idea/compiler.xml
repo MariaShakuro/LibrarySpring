@@ -8,15 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="jwtdemo" />
-      </profile>
-      <profile name="Annotation profile for libraryservice" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-        </processorPath>
         <module name="libraryservice" />
         <module name="library" />
       </profile>
@@ -24,9 +15,9 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="jwtdemo" options="-parameters" />
-      <module name="library" options="-parameters" />
-      <module name="libraryservice" options="-parameters" />
+      <module name="jwtdemo" options="" />
+      <module name="library" options="" />
+      <module name="libraryservice" options="" />
     </option>
   </component>
 </project>

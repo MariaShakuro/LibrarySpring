@@ -2,6 +2,7 @@ package com.example.library.controller;
 
 import com.example.library.entity.Book;
 import com.example.library.service.UnauthorizedException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
+@Slf4j
 public class BookController {
     @Autowired
     public BookService bookService;
-    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
@@ -46,16 +47,13 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     Mono<ResponseEntity<?>> addBook(@RequestBody Book book,@RequestHeader("Authorization")String token) {
-        logger.info("Received request to add book with ISBN: {}", book.getIsbn());
+        log.info("Received request to add book with ISBN: {}", book.getIsbn());
         try{
             Book createdBook=bookService.addBook(book,token);
-            logger.info("Book created successfully with ID: {}", createdBook.getId());
             return Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(createdBook));
         }catch(IllegalArgumentException e){
-            logger.error("Conflict error: {}", e.getMessage(), e);
             return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()));
         }catch(Exception e){
-             logger.error("Internal error: {}", e.getMessage(), e);
             return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal error"));
         }
     }

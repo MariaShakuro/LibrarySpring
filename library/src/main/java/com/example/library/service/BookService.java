@@ -2,6 +2,7 @@ package com.example.library.service;
 
 import com.example.library.client.JwtAuthClient;
 import com.example.library.entity.Book;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,8 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class BookService {
-    private static final Logger logger= LoggerFactory.getLogger(BookService.class);
     @Autowired
     private BookRepository bookRepository;
     @Autowired
@@ -31,7 +32,7 @@ public class BookService {
                     .filter(book -> !book.isDeleted())
                     .collect(Collectors.toList());
         }else{
-            logger.error("Error retrieving books from database");
+            log.error("Error retrieving books from database");
            throw new UnauthorizedException("Invalid JWT token");
         }
     }
@@ -48,31 +49,27 @@ public class BookService {
         else throw new UnauthorizedException("Invalid JWT token");
     }
     public Book addBook(Book book,String jwtToken) throws UnauthorizedException {
-        logger.info("Starting addBook method with book ISBN: {} and JWT token",book.getIsbn());
+        log.info("Starting addBook method with book ISBN: {} and JWT token",book.getIsbn());
         String bearerToken = "Bearer " + jwtToken.trim();
         Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
         if (isValidToken) {
-            logger.info("JWT token is valid");
             Optional<Book> existingBook = bookRepository.getBookByIsbn(book.getIsbn());
             if (existingBook.isPresent()) {
-                logger.warn("The book with ISBN: {} already exists", book.getIsbn());
                 throw new IllegalArgumentException("The book already existed with this isbn");
             }
             try {
-                logger.info("Saving new book...");
+                log.info("Saving new book...");
                 Book createdBook = bookRepository.save(book);
-                logger.info("Book saved successfully with ID: {}", createdBook.getId());
-                logger.info("Sending book event to Kafka...");
+                log.info("Book saved successfully with ID: {}", createdBook.getId());
+                log.info("Sending book event to Kafka...");
                 bookProducer.sendBookEvent("new-book-topic", createdBook.getId());
-                logger.info("Book event sent successfully");
+                log.info("Book event sent successfully");
                 return createdBook;
                 //bookRepository.save(book);
             }catch(Exception e){
-                logger.error("Error saving book", e);
                 throw new RuntimeException("Error saving book", e);
             }
         }else{
-            logger.warn("Invalid JWT token");
             throw new UnauthorizedException("Invalid JWT token");
         }
         }

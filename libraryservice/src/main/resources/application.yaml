@@ -3,7 +3,7 @@ spring:
   name: libraryservice
 
  datasource:
-  url: jdbc:mysql://mysql:3306/freebookservice
+  url: jdbc:mysql://mysql:3306/freebookservice?createDatabaseIfNotExist=true
   username: root
   password: dsova2207_12
   driver-class-name: com.mysql.cj.jdbc.Driver
@@ -15,11 +15,7 @@ spring:
    auto-offset-reset: earliest
    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
    value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-   properties:
-    spring:
-     json:
-      trusted:
-       packages: *
+
 
  main:
   allow-bean-definition-overriding: true
@@ -37,3 +33,21 @@ security:
 
 server:
   port: 8082
+
+kafka:
+ advertised:
+  listeners: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://localhost:9093
+ listeners: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://localhost:9093
+ auto:
+  create:
+   topics:
+    enable: true
+ listener:
+  security:
+   protocol:
+    map: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+ log:
+  retention:
+   hours: 168
+ zookeeper:
+  connect: zookeeper:2181

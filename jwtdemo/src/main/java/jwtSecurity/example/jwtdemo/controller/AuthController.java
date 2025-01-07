@@ -1,7 +1,7 @@
 package jwtSecurity.example.jwtdemo.controller;
 
 
-import jakarta.validation.Valid;
+
 import jwtSecurity.example.jwtdemo.config.JwtTokenProvider;
 import jwtSecurity.example.jwtdemo.dto.AuthResponseDto;
 import jwtSecurity.example.jwtdemo.dto.LoginDto;
@@ -9,24 +9,23 @@ import jwtSecurity.example.jwtdemo.dto.RegisterDto;
 import jwtSecurity.example.jwtdemo.service.AuthService;
 import jwtSecurity.example.jwtdemo.exception.AccessDeniedException;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
 
     @Autowired
     private AuthService authService;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginDto loginDto){
@@ -49,9 +48,9 @@ public class AuthController {
     }
     @GetMapping("/validate")
     public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
-         logger.debug("Received token: {}",token);
+         log.debug("Received token: {}",token);
         boolean isValid = jwtTokenProvider.validateToken(token.replace("Bearer ","").trim());
-        logger.debug("Is token valid: {}", isValid);
+        log.debug("Is token valid: {}", isValid);
         return ResponseEntity.ok(isValid);
     }
 }
