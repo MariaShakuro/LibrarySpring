@@ -9,13 +9,21 @@
 
 Если нет,то вот [ссылка](https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip)
 
+Распаковать в папку Maven и добавить путь в ,,Переменные среды,,+проверить JDK установлен ли и прописан ли также путь там
+
+**2.1 Проверить скачан ли Docker Desktop**
+
+[Ссылка для скачивания](https://www.docker.com/products/docker-desktop/)
+
+ Установить и также добавить путь в ,,Переменные среды,,
+
 **3.Переходим в IDE **
 
 В терминале:
 
-Сначала надо собрать jar каждого сервиса(library,jwtDemo,libraryservice):
+Сначала надо собрать jar каждого сервиса(library,jwtdemo,libraryservice):
 
-      ```cd jwtDemo```
+      ```cd jwtdemo```
 
      ```mvn clean install```
 
