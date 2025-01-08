@@ -19,12 +19,4 @@ public class Book {
     private String genre;
     private String description;
     private String author;
-   private boolean deleted=false;
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-    public void setDeleted(boolean deleted){
-        this.deleted=deleted;
-    }
 }

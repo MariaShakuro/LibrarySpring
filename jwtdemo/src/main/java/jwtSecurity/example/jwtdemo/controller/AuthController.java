@@ -13,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.Valid;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
-@Slf4j
 public class AuthController {
 
     @Autowired
@@ -48,9 +46,9 @@ public class AuthController {
     }
     @GetMapping("/validate")
     public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
-         log.debug("Received token: {}",token);
+       //  log.debug("Received token: {}",token);
         boolean isValid = jwtTokenProvider.validateToken(token.replace("Bearer ","").trim());
-        log.debug("Is token valid: {}", isValid);
+        //log.debug("Is token valid: {}", isValid);
         return ResponseEntity.ok(isValid);
     }
 }

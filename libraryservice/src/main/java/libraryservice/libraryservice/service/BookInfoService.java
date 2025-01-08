@@ -3,6 +3,7 @@ package libraryservice.libraryservice.service;
 
 import libraryservice.libraryservice.client.JwtAuthClient;
 import libraryservice.libraryservice.dto.BookInfoDto;
+import libraryservice.libraryservice.dto.BookInfoMapper;
 import libraryservice.libraryservice.entity.BookInfo;
 import libraryservice.libraryservice.repository.BookInfoRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class BookInfoService {
     @Autowired
@@ -26,62 +26,39 @@ public class BookInfoService {
 
 
 
-    public List<BookInfoDto> getAvailableBooks(String jwtToken) {
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if (isValidToken) {
+    public List<BookInfoDto> getAvailableBooks() {
             List<BookInfo> availableBooks = bookInfoRepository.findByStatus("available");
-            log.info("Found " + availableBooks.size() + " available books");
+         //   log.info("Found " + availableBooks.size() + " available books");
             List<BookInfoDto>availableBookDTOs=availableBooks.stream()
-                    .map(book -> new BookInfoDto(
-                            book.getBookId(),
-                            book.getStatus(),
-                            book.getBorrowTime() !=null ? book.getBorrowTime() : LocalDateTime.now(),
-                            book.getReturnTime() !=null ? book.getReturnTime() : LocalDateTime.now().plusWeeks(2),
-                            book.getIsDeleted()))
+                    .map(BookInfoMapper.INSTANCE::toDto)
                     .collect(Collectors.toList());
             return availableBookDTOs;
-        }else{
-            throw new UnauthorizedException("Invalid JWT token");
-        }
     }
 
-    public void updateBookStatus(String jwtToken, BookInfoDto bookInfoDTO){
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if (isValidToken) {
-            if(!bookInfoDTO.getStatus().equals("available") && !bookInfoDTO.getStatus().equals("taken")) {
+    public void updateBookStatus(BookInfoDto bookInfoDto){
+            if(!bookInfoDto.getStatus().equals("available") && !bookInfoDto.getStatus().equals("taken")) {
                 throw new IllegalArgumentException("Irrelevant status value");
             }
-                BookInfo bookInfo = bookInfoRepository.findByBookId(bookInfoDTO.getBookId())
+                BookInfo bookInfo = bookInfoRepository.findByBookId(bookInfoDto.getBookId())
                         .orElseThrow(() -> new RuntimeException("Book not found"));
-                bookInfo.setStatus(bookInfoDTO.getStatus());
+                bookInfo.setStatus(bookInfo.getStatus());
                 bookInfoRepository.save(bookInfo);
-
-        }else{
-            throw new UnauthorizedException("Invalid JWT token");
-        }
     }
 
-    public List<BookInfo>getAllBooksInfo(String jwtToken){
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if (isValidToken) {
-            /* allBooks.forEach(book->{
-                if (book.getBorrowTime() == null)  book.setBorrowTime(LocalDateTime.now());
-                if (book.getReturnTime() == null)  book.setReturnTime(LocalDateTime.now().plusWeeks(2));
-            });*/
-            return bookInfoRepository.findAll();
-        }else{
-            throw new UnauthorizedException("Invalid JWT token");
-        }
+    public List<BookInfoDto>getAllBooksInfo(){
+            List<BookInfo> allBooks = bookInfoRepository.findAll();
+            List<BookInfoDto> allBookDtos = allBooks.stream()
+                    .map(BookInfoMapper.INSTANCE::toDto)
+                    .collect(Collectors.toList());
+            return allBookDtos;
     }
-    public BookInfo updateBookInfo(Long id, BookInfo details){
+    public BookInfoDto updateBookInfo(Long id, BookInfoDto details){
         BookInfo bookInfo=bookInfoRepository.findById(id).orElseThrow(()->new RuntimeException("Book not found"));
         bookInfo.setBorrowTime(details.getBorrowTime());
         bookInfo.setReturnTime(details.getReturnTime());
         bookInfo.setStatus(details.getStatus());
-        return bookInfoRepository.save(bookInfo);
+       BookInfo updatedBookInfo = bookInfoRepository.save(bookInfo);
+        return BookInfoMapper.INSTANCE.toDto(updatedBookInfo);
     }
    /* public BookInfo saveBookInfo(Long id){
         BookInfo bookInfo=new BookInfo();

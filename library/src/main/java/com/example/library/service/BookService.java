@@ -1,6 +1,8 @@
 package com.example.library.service;
 
 import com.example.library.client.JwtAuthClient;
+import com.example.library.dto.BookDto;
+import com.example.library.dto.BookMapper;
 import com.example.library.entity.Book;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -15,97 +17,60 @@ import java.util.stream.Collectors;
 
 
 @Service
-@Slf4j
 public class BookService {
     @Autowired
     private BookRepository bookRepository;
     @Autowired
     private BookProducer bookProducer;
-    @Autowired
-    private JwtAuthClient jwtAuthClient;
 
-    public List<Book>getAllBooks(String jwtToken) throws UnauthorizedException {
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if (isValidToken) {
-            return bookRepository.findAll().stream()
-                    .filter(book -> !book.isDeleted())
-                    .collect(Collectors.toList());
-        }else{
-            log.error("Error retrieving books from database");
-           throw new UnauthorizedException("Invalid JWT token");
-        }
+    public List<BookDto>getAllBooks()  {
+        List<Book> books = bookRepository.findAll();
+        return books.stream().map(BookMapper.INSTANCE::toDto).toList();
     }
-    public Optional<Book>getBookById(Long id,String jwtToken) throws UnauthorizedException {
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if(isValidToken) return bookRepository.findById(id);
-        else throw new UnauthorizedException("Invalid JWT token");
+    public Optional<BookDto>getBookById(Long id) {
+        return bookRepository.findById(id).map(BookMapper.INSTANCE::toDto);
     }
-    public Optional<Book>getBookByIsbn(String isbn,String jwtToken) throws UnauthorizedException {
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if(isValidToken) return bookRepository.getBookByIsbn(isbn);
-        else throw new UnauthorizedException("Invalid JWT token");
+    public Optional<BookDto>getBookByIsbn(String isbn) {
+         return bookRepository.getBookByIsbn(isbn).map(BookMapper.INSTANCE::toDto);
     }
-    public Book addBook(Book book,String jwtToken) throws UnauthorizedException {
-        log.info("Starting addBook method with book ISBN: {} and JWT token",book.getIsbn());
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if (isValidToken) {
-            Optional<Book> existingBook = bookRepository.getBookByIsbn(book.getIsbn());
+    public BookDto addBook(BookDto bookDto)  {
+      //  log.info("Starting addBook method with book ISBN: {} and JWT token",book.getIsbn());
+            Optional<Book> existingBook = bookRepository.getBookByIsbn(bookDto.getIsbn());
             if (existingBook.isPresent()) {
                 throw new IllegalArgumentException("The book already existed with this isbn");
             }
             try {
-                log.info("Saving new book...");
-                Book createdBook = bookRepository.save(book);
-                log.info("Book saved successfully with ID: {}", createdBook.getId());
-                log.info("Sending book event to Kafka...");
+              //  log.info("Saving new book...");
+                Book book = BookMapper.INSTANCE.toEntity(bookDto);
+                Book createdBook=bookRepository.save(book);
+               // log.info("Book saved successfully with ID: {}", createdBook.getId());
+             //   log.info("Sending book event to Kafka...");
                 bookProducer.sendBookEvent("new-book-topic", createdBook.getId());
-                log.info("Book event sent successfully");
-                return createdBook;
+              //  log.info("Book event sent successfully");
+                return BookMapper.INSTANCE.toDto(createdBook);
                 //bookRepository.save(book);
-            }catch(Exception e){
+            }catch(Exception e) {
                 throw new RuntimeException("Error saving book", e);
             }
-        }else{
-            throw new UnauthorizedException("Invalid JWT token");
-        }
         }
 
-    public void deleteBook(Long id,String jwtToken) throws UnauthorizedException {
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if (isValidToken){
+    public void deleteBook(Long id)  {
+
         Optional<Book> book = bookRepository.findById(id);
         if (book.isPresent()) {
-            // Soft delete logic
-            book.get().setDeleted(true);
-            bookRepository.save(book.get());
+            bookRepository.deleteById(id);
             bookProducer.sendBookEvent("delete-book-topic", id);
-        }else{
-            throw new RuntimeException("Book not found");
-        }
-        }else{
-            throw new UnauthorizedException("Invalid JWT token");
-        }
-        //bookRepository.deleteById(id);
+        } else throw new RuntimeException("Book not found");
     }
-    public Book updateBook(Long id,Book details,String jwtToken) throws UnauthorizedException {
-        String bearerToken = "Bearer " + jwtToken.trim();
-        Boolean isValidToken = jwtAuthClient.validateToken(bearerToken);
-        if (isValidToken) {
+    public BookDto updateBook(Long id,BookDto details) throws UnauthorizedException {
             Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
             book.setName(details.getName());
             book.setIsbn(details.getIsbn());
             book.setGenre(details.getGenre());
             book.setDescription(details.getDescription());
             book.setAuthor(details.getAuthor());
-            return bookRepository.save(book);
-        }else{
-            throw new UnauthorizedException("Invalid JWT token");
-        }
+            Book updatedBook = bookRepository.save(book);
+            return BookMapper.INSTANCE.toDto(updatedBook);
     }
 
 }

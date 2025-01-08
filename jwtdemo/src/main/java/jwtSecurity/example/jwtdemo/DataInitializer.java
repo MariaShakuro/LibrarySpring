@@ -28,22 +28,25 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
 
-        Role adminRole = new Role();
-        adminRole.setId(1L);
-        adminRole.setName("ROLE_ADMIN");
-
-        Role userRole = new Role();
-        userRole.setId(2L);
-        userRole.setName("ROLE_USER");
+        Role adminRole =Role.builder()
+                .id(1L)
+                .name("ROLE_ADMIN")
+                .build();
         entityManager.persist(adminRole);
+
+        Role userRole =Role.builder()
+                .id(2L)
+                .name("ROLE_USER")
+                .build();
         entityManager.persist(userRole);
 
-        User user = new User();
-        user.setId(1L);
-        user.setEmail("masha@gmail.com");
-        user.setName("masha");
-        user.setUsername("shakuro");
-        user.setPassword("123456");
+        User user =User.builder()
+                .id(1L)
+                .email("masha@gmail.com")
+                .name("masha")
+                .username("shakuro")
+                .password("123456")
+                .build();
         entityManager.persist(user);
 
 

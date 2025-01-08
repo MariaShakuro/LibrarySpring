@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Setter
+@Getter
+@Table(name="book_info")
 public class BookInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,48 +23,6 @@ public class BookInfo {
     private String status;
     private LocalDateTime borrowTime;
     private LocalDateTime returnTime;
-   private Boolean isDeleted=false;
-   public  void setIsDeleted(Boolean isDeleted){
-       this.isDeleted=isDeleted;
-   }
 
-    public Boolean getIsDeleted() {
-        return isDeleted;
-    }
 
-    public void setId(Long id){
-        this.id=id;
-    }
-
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
-    }
-
-    public Long getBookId() {
-        return bookId;
-    }
-
-    public void setBorrowTime(LocalDateTime borrowTime){
-        this.borrowTime=borrowTime;
-    }
-    public void setReturnTime(LocalDateTime returnTime){
-        this.returnTime=returnTime;
-    }
-    public Long getId(){
-        return id;
-    }
-    public void setStatus(String status){
-        this.status=status;
-    }
-
-    public LocalDateTime getBorrowTime() {
-        return borrowTime;
-    }
-
-    public LocalDateTime getReturnTime() {
-        return returnTime;
-    }
-    public String getStatus(){
-        return status;
-    }
 }

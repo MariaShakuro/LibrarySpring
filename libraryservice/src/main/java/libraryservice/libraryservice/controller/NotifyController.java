@@ -1,6 +1,7 @@
 package libraryservice.libraryservice.controller;
 
 import libraryservice.libraryservice.dto.BookInfoDto;
+import libraryservice.libraryservice.dto.BookInfoMapper;
 import libraryservice.libraryservice.entity.BookInfo;
 import libraryservice.libraryservice.service.BookInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,33 +21,29 @@ public class NotifyController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/available")
-    public ResponseEntity<List<BookInfoDto>> getAvailableBooks(@RequestHeader("Authorization")String token) {
-        List<BookInfoDto> availableBooks = bookInfoService.getAvailableBooks(token);
+    public ResponseEntity<List<BookInfoDto>> getAvailableBooks() {
+        List<BookInfoDto> availableBooks = bookInfoService.getAvailableBooks();
         return ResponseEntity.ok(availableBooks);
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/updateStatus")
-    public ResponseEntity<Void> updateBookStatus(@RequestHeader("Authorization")String token, @RequestBody BookInfoDto bookInfoDTO) {
-        bookInfoService.updateBookStatus(token,bookInfoDTO);
+    public ResponseEntity<Void> updateBookStatus( @RequestBody BookInfoDto bookInfoDto) {
+        bookInfoService.updateBookStatus(bookInfoDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
-    public ResponseEntity<List<BookInfo>>getAllBooksInfo(@RequestHeader("Authorization")String token){
-        List<BookInfo>booksInfo=bookInfoService.getAllBooksInfo(token);
+    public ResponseEntity<List<BookInfoDto>>getAllBooksInfo(){
+        List<BookInfoDto> booksInfo=bookInfoService.getAllBooksInfo();
         return ResponseEntity.ok(booksInfo);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
    @PatchMapping("/{bookId}")
-    public ResponseEntity<BookInfo> updateBookInfo(@PathVariable Long bookId, @RequestBody BookInfo details){
-        try{
-            BookInfo updatedBook=bookInfoService.updateBookInfo(bookId,details);
+    public ResponseEntity<BookInfoDto> updateBookInfo(@PathVariable Long bookId, @RequestBody BookInfoDto details){
+            BookInfoDto updatedBook = bookInfoService.updateBookInfo(bookId, details);
             return ResponseEntity.ok(updatedBook);
-        }catch(RuntimeException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
    }
 }
