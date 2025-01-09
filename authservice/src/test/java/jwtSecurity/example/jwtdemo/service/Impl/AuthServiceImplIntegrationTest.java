@@ -41,7 +41,6 @@ public class AuthServiceImplIntegrationTest extends BaseTest {
 
     @BeforeEach
     public void setUp() {
-        super.setUp();
         authService = new AuthServiceImpl(authenticationManager, jwtTokenProvider, passwordEncoder, userRepository, roleRepository);
 
 

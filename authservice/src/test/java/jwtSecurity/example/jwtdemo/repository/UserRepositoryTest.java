@@ -24,24 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UserRepositoryTest {
 
     UserRepository userRepository;
-    User user;
-
-    @BeforeEach
-    void setUp() {
-        User.builder()
-                .username("testuser")
-                .email("testuser@example.com")
-                .build();
-        userRepository.save(user);
-    }
 
     @Test
     @DisplayName("Should Find User By Username")
     void shouldFindByUsername() {
         String username = "testuser";
+        User user=User.builder()
+                .username(username)
+                .build();
+        userRepository.save(user);
         Optional<User> foundUser = userRepository.findByUsername(username);
 
-        assertTrue(foundUser.isPresent(), "User should be found");
+        assertThat(foundUser).isPresent();
         assertThat(foundUser.get().getUsername()).isEqualTo(username);
     }
 
@@ -49,9 +43,13 @@ public class UserRepositoryTest {
     @DisplayName("Should Find User By Email")
     void shouldFindByEmail() {
         String email = "testuser@example.com";
+        User user=User.builder()
+                .email(email)
+                .build();
+        userRepository.save(user);
         Optional<User> foundUser = userRepository.findByEmail(email);
 
-        assertTrue(foundUser.isPresent(), "User should be found");
+        assertThat(foundUser).isPresent();
         assertThat(foundUser.get().getEmail()).isEqualTo(email);
     }
 }

@@ -22,23 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RoleRepositoryTest {
 
     RoleRepository roleRepository;
-    Role role;
 
-    @BeforeEach
-    void setUp() {
-        Role.builder()
-                .name("ROLE_USER")
-                .build();
-        roleRepository.save(role);
-    }
 
     @Test
     @DisplayName("Should Find Role By Name")
     void shouldFindByName() {
         String roleName = "ROLE_USER";
+        Role role=Role.builder()
+                .name(roleName)
+                .build();
+        roleRepository.save(role);
         Role foundRole = roleRepository.findByName(roleName);
 
-        assertNotNull(foundRole, "Role should be found");
+        assertThat(foundRole).isNotNull();
         assertThat(foundRole.getName()).isEqualTo(roleName);
     }
 }
