@@ -9,5 +9,6 @@ public interface BookInfoMapper {
     BookInfoMapper INSTANCE = Mappers.getMapper(BookInfoMapper.class);
 
     BookInfoDto toDto(BookInfo bookInfo);
+
     BookInfo toEntity(BookInfoDto bookInfoDto);
 }

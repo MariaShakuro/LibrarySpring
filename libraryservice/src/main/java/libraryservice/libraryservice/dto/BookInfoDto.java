@@ -3,10 +3,10 @@ package libraryservice.libraryservice.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder

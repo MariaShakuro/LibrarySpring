@@ -76,8 +76,8 @@ services:
 
   jwtdemo:
     build:
-      context: ./jwtdemo
-    image: jwtdemo
+      context: ./authservice
+    image: authservice
     ports:
       - "8083:8083"
     environment:

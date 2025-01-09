@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 @Component
-@FeignClient(name = "jwtDemoApplication", url = "http://jwtdemo:8083")
+@FeignClient(name = "authServiceApplication", url = "http://authservice:8083")
 public interface JwtAuthClient {
     @GetMapping("/api/auth/validate")
     Boolean validateToken(@RequestHeader("Authorization") String token);

@@ -2,9 +2,7 @@ package libraryservice.libraryservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Version;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -13,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Getter
-@Table(name="book_info")
+@Table(name = "book_info")
 public class BookInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
