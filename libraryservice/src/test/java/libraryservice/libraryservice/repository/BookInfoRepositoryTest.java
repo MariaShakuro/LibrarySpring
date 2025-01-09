@@ -1,59 +1,56 @@
 package libraryservice.libraryservice.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
-
 import libraryservice.libraryservice.entity.BookInfo;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.DisplayName;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
+@ActiveProfiles("test")
+@DisplayName("Unit Tests for BookInfoRepository")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BookInfoRepositoryTest {
 
-    @Mock
-    private BookInfoRepository bookInfoRepository;
-
-    private BookInfo bookInfo1;
-    private BookInfo bookInfo2;
+    BookInfoRepository bookInfoRepository;
+    BookInfo bookInfo;
 
     @BeforeEach
     void setUp() {
-        bookInfo1 = new BookInfo();
-        bookInfo1.setBookId(1L);
-        bookInfo1.setStatus("available");
-
-        bookInfo2 = new BookInfo();
-        bookInfo2.setBookId(2L);
-        bookInfo2.setStatus("checked_out");
+        BookInfo.builder()
+                .status("available")
+                .build();
+        bookInfoRepository.save(bookInfo);
     }
 
     @Test
-    void testFindByBookId() {
-        when(bookInfoRepository.findByBookId(1L)).thenReturn(Optional.of(bookInfo1));
+    @DisplayName("Should Find Book By Book ID")
+    void shouldFindByBookId() {
+        Long bookId = bookInfo.getBookId();
+        Optional<BookInfo> foundBook = bookInfoRepository.findByBookId(bookId);
 
-        Optional<BookInfo> result = bookInfoRepository.findByBookId(1L);
-
-        assertTrue(result.isPresent());
-        assertEquals(1L, result.get().getBookId());
+        assertTrue(foundBook.isPresent(), "Book should be found");
+        assertThat(foundBook.get().getBookId()).isEqualTo(bookId);
     }
 
     @Test
-    void testFindByStatus() {
-        when(bookInfoRepository.findByStatus("available")).thenReturn(List.of(bookInfo1));
+    @DisplayName("Should Find Books By Status")
+    void shouldFindByStatus() {
+        String status = "available";
+        List<BookInfo> availableBooks = bookInfoRepository.findByStatus(status);
 
-        List<BookInfo> result = bookInfoRepository.findByStatus("available");
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("available", result.get(0).getStatus());
+        assertThat(availableBooks).isNotEmpty();
+        assertThat(availableBooks.get(0).getStatus()).isEqualTo(status);
     }
 }
 

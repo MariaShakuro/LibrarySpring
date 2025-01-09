@@ -1,77 +1,70 @@
 package jwtSecurity.example.jwtdemo.config;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
-import java.io.IOException;
-
-
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
+import jwtSecurity.example.jwtdemo.BaseTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.junit.jupiter.api.DisplayName;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-@ExtendWith(MockitoExtension.class)
-public class JwtAuthenticationFilterTest {
-
-    @Mock
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Mock
-    private UserDetailsService userDetailsService;
+@DisplayName("Unit Tests for JwtAuthenticationFilter")
+public class JwtAuthenticationFilterTest extends BaseTest {
 
     @InjectMocks
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @BeforeEach
-    void setUp() {
-       jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
-    }
-
     @Test
-    void testDoFilterInternal_ValidToken() throws ServletException, IOException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain filterChain = mock(FilterChain.class);
-
-        when(jwtTokenProvider.getTokenFromRequest(request)).thenReturn("valid-token");
-        when(jwtTokenProvider.validateToken("valid-token")).thenReturn(true);
-        when(jwtTokenProvider.getUsername("valid-token")).thenReturn("testuser");
-
+    @DisplayName("Should Set Authentication for Valid Token")
+    void shouldSetAuthenticationForValidToken() throws Exception {
+        String token = "valid-token";
+        String username = "testuser";
         UserDetails userDetails = mock(UserDetails.class);
-        when(userDetailsService.loadUserByUsername("testuser")).thenReturn(userDetails);
+        when(jwtTokenProvider.getTokenFromRequest(request)).thenReturn(token);
+        when(jwtTokenProvider.validateToken(token)).thenReturn(true);
+        when(jwtTokenProvider.getUsername(token)).thenReturn(username);
+        when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(jwtTokenProvider, times(1)).getTokenFromRequest(request);
-        verify(jwtTokenProvider, times(1)).validateToken("valid-token");
-        verify(jwtTokenProvider, times(1)).getUsername("valid-token");
-        verify(userDetailsService, times(1)).loadUserByUsername("testuser");
+        verify(userDetailsService, times(1)).loadUserByUsername(username);
         verify(filterChain, times(1)).doFilter(request, response);
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isInstanceOf(UsernamePasswordAuthenticationToken.class);
     }
 
     @Test
-    void testDoFilterInternal_InvalidToken() throws ServletException, IOException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain filterChain = mock(FilterChain.class);
-
-        when(jwtTokenProvider.getTokenFromRequest(request)).thenReturn("invalid-token");
-        when(jwtTokenProvider.validateToken("invalid-token")).thenReturn(false);
+    @DisplayName("Should Not Set Authentication for Invalid Token")
+    void shouldNotSetAuthenticationForInvalidToken() throws Exception {
+        String token = "invalid-token";
+        when(jwtTokenProvider.getTokenFromRequest(request)).thenReturn(token);
+        when(jwtTokenProvider.validateToken(token)).thenReturn(false);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(jwtTokenProvider, times(1)).getTokenFromRequest(request);
-        verify(jwtTokenProvider, times(1)).validateToken("invalid-token");
-        verify(jwtTokenProvider, never()).getUsername(anyString());
         verify(userDetailsService, never()).loadUserByUsername(anyString());
         verify(filterChain, times(1)).doFilter(request, response);
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+    }
+
+    @Test
+    @DisplayName("Should Not Set Authentication if Token Not Present")
+    void shouldNotSetAuthenticationIfTokenNotPresent() throws Exception {
+        when(jwtTokenProvider.getTokenFromRequest(request)).thenReturn(null);
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(userDetailsService, never()).loadUserByUsername(anyString());
+        verify(filterChain, times(1)).doFilter(request, response);
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
     }
 }
+

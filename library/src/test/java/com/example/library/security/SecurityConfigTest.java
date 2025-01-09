@@ -1,6 +1,6 @@
-package libraryservice.libraryservice.security;
+package com.example.library.security;
 
-import libraryservice.libraryservice.BaseTest;
+import com.example.library.BaseTest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

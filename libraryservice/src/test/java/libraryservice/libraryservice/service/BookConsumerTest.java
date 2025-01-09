@@ -6,16 +6,12 @@ import java.util.Optional;
 
 import libraryservice.libraryservice.entity.BookInfo;
 import libraryservice.libraryservice.repository.BookInfoRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.annotation.KafkaListener;
 
-@ExtendWith(MockitoExtension.class)
+@DisplayName("Unit Tests for BookConsumer")
 public class BookConsumerTest {
 
     @Mock
@@ -23,16 +19,15 @@ public class BookConsumerTest {
 
     @InjectMocks
     private BookConsumer bookConsumer;
-    private BookInfo bookInfo;
-    @BeforeEach
-    void setUp() {
-    }
+
 
     @Test
+    @DisplayName("Should Handle Delete Book")
     void testHandleDeleteBook() {
         Long bookId = 1L;
-        BookInfo bookInfo = new BookInfo();
-        bookInfo.setBookId(bookId);
+        BookInfo bookInfo = BookInfo.builder()
+                .bookId(bookId)
+                .build();
         when(bookInfoRepository.findByBookId(bookId)).thenReturn(Optional.of(bookInfo));
 
         bookConsumer.handleDeleteBook(bookId);
