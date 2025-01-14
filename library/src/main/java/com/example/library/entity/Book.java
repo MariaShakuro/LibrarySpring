@@ -21,4 +21,5 @@ public class Book {
     private String genre;
     private String description;
     private String author;
+    private boolean deleted;
 }

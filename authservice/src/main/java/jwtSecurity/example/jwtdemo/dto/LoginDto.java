@@ -3,27 +3,20 @@ package jwtSecurity.example.jwtdemo.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginDto {
     @NotBlank
     private String username;
     @NotBlank
-    @Min(6)
-    @Max(6)
+    @Size(min = 6,max = 20)
     private String password;
 
-    public void setPassword(@NotBlank @Min(6) @Max(6) String password) {
-        this.password = password;
-    }
-
-    public void setUsername(@NotBlank String username) {
-        this.username = username;
-    }
 }

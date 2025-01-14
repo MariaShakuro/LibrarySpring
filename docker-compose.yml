@@ -74,7 +74,7 @@ services:
     networks:
       - libraryspring_app-network
 
-  jwtdemo:
+  authservice:
     build:
       context: ./authservice
     image: authservice

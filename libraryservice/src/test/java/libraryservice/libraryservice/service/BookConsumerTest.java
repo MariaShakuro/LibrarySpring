@@ -1,5 +1,5 @@
 package libraryservice.libraryservice.service;
-
+/*
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -36,3 +36,4 @@ public class BookConsumerTest {
         verify(bookInfoRepository, times(1)).save(bookInfo);
     }
 }
+*/

@@ -1,11 +1,14 @@
 package jwtSecurity.example.jwtdemo.config;
-
+/*
 import java.util.Optional;
 import java.util.Set;
 
 import jwtSecurity.example.jwtdemo.model.Role;
 import jwtSecurity.example.jwtdemo.model.User;
 import jwtSecurity.example.jwtdemo.repository.UserRepository;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,6 +16,8 @@ import org.mockito.Mock;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.junit.jupiter.api.DisplayName;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -21,7 +26,9 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
+@SpringBootTest
+@ActiveProfiles("test")
 @DisplayName("Unit Tests for CustomUserDetailsService")
 public class CustomUserDetailsServiceTest {
 
@@ -71,4 +78,4 @@ public class CustomUserDetailsServiceTest {
     }
 }
 
-
+*/

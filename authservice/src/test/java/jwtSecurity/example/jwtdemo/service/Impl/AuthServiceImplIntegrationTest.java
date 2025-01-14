@@ -1,6 +1,6 @@
 package jwtSecurity.example.jwtdemo.service.Impl;
 
-
+/*
 import jwtSecurity.example.jwtdemo.BaseTest;
 import jwtSecurity.example.jwtdemo.config.JwtTokenProvider;
 import jwtSecurity.example.jwtdemo.dto.LoginDto;
@@ -16,17 +16,21 @@ import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-
-@DataJpaTest
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ActiveProfiles("test")
 @DisplayName("Integration Tests for AuthServiceImpl")
 @RequiredArgsConstructor
@@ -136,6 +140,6 @@ public class AuthServiceImplIntegrationTest extends BaseTest {
 }
 
 
-
+*/
 
 

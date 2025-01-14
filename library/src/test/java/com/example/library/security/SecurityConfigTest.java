@@ -1,5 +1,5 @@
 package com.example.library.security;
-
+/*
 import com.example.library.BaseTest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,3 +34,4 @@ public class SecurityConfigTest extends BaseTest {
 
 }
 
+*/

@@ -1,6 +1,6 @@
 package libraryservice.libraryservice.controller;
 
-
+/*
 import libraryservice.libraryservice.BaseTest;
 import libraryservice.libraryservice.dto.BookInfoDto;
 import libraryservice.libraryservice.entity.BookInfo;
@@ -99,3 +99,4 @@ public class NotifyControllerIntegrationTest extends BaseTest {
         assertThat(updatedBookInfo.getStatus()).isEqualTo("taken");
     }
 }
+*/

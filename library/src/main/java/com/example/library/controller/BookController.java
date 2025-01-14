@@ -2,6 +2,9 @@ package com.example.library.controller;
 
 import com.example.library.dto.BookDto;
 import com.example.library.entity.Book;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.ReflectionUtils;
 import org.springframework.http.HttpStatus;
@@ -16,75 +19,65 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/api/books")
+@Tag(name = "Books", description = "Operations related to books")
 public class BookController {
     @Autowired
     public BookService bookService;
 
+    @Operation(summary = "Get all books", description = "Fetches all books in the library")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
     List<BookDto> getAllBooks() {
+        log.info("Fetching all books");
         return bookService.getAllBooks();
     }
 
+    @Operation(summary = "Get book by ID", description = "Fetches a book by its ID")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/{id}")
-    ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
+    ResponseEntity<BookDto> getBookById(@PathVariable("id") Long id) {
+        log.info("Fetching book with ID: {}", id);
         Optional<BookDto> bookDto = bookService.getBookById(id);
         return bookDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Get book by ISBN", description = "Fetches a book by its ISBN")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/isbn/{isbn}")
-    ResponseEntity<BookDto> getBookByIsbn(@PathVariable String isbn) {
+    ResponseEntity<BookDto> getBookByIsbn(@PathVariable("isbn") String isbn) {
+        log.info("Fetching book with ISBN: {}", isbn);
         Optional<BookDto> bookDto = bookService.getBookByIsbn(isbn);
         return bookDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Add a new book", description = "Adds a new book to the library")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     Mono<ResponseEntity<?>> addBook(@RequestBody BookDto bookDto) {
+        log.info("Adding a new book: {}", bookDto.getName());
         BookDto createdBook = bookService.addBook(bookDto);
         return Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(createdBook));
 
     }
 
+    @Operation(summary = "Update book", description = "Updates the details of an existing book")
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
-    ResponseEntity<?> updateBook(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
-        BookDto bookDto = bookService.getBookById(id).orElseThrow(() -> new RuntimeException("Book not found"));
-        if (!isValidBookData(bookDto)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect data for book");
-        }
-        updates.forEach((key, value) -> {
-            Field field;
-            try {
-                field = Book.class.getDeclaredField(key);
-                field.setAccessible(true);
-                field.set(bookDto, value);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException("Error with update the field" + key, e);
-            }
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, bookDto, value);
-        });
-        bookService.updateBook(id, bookDto);
-        return ResponseEntity.ok(bookDto);
+    public ResponseEntity<BookDto> updateBook(@PathVariable("id") Long id, @RequestBody BookDto bookDto) {
+        log.info("Updating book with ID: {}", id);
+        return bookService.updateBook(id, bookDto)
+                .map(updatedBook -> new ResponseEntity<>(updatedBook, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    private boolean isValidBookData(BookDto bookDto) {
-        return bookDto.getIsbn() != null && !bookDto.getIsbn().isEmpty() &&
-                bookDto.getName() != null && !bookDto.getName().isEmpty() &&
-                bookDto.getGenre() != null && !bookDto.getGenre().isEmpty() &&
-                bookDto.getDescription() != null && !bookDto.getDescription().isEmpty() &&
-                bookDto.getAuthor() != null && !bookDto.getAuthor().isEmpty();
-    }
-
+    @Operation(summary = "Delete book", description = "Deletes a book by its ID")
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteBook(@PathVariable Long id) {
+    ResponseEntity<?> deleteBook(@PathVariable("id") Long id) {
+        log.info("Deleting book with ID: {}", id);
         if (!bookService.getBookById(id).isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You already deleted the book");
         }

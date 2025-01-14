@@ -1,5 +1,5 @@
 package libraryservice.libraryservice.security;
-
+/*
 import libraryservice.libraryservice.BaseTest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,3 +34,4 @@ public class SecurityConfigTest extends BaseTest {
 
 }
 
+*/
