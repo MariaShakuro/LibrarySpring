@@ -1,6 +1,6 @@
 package jwtSecurity.example.jwtdemo;
 
-/*
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,4 +74,3 @@ public abstract class BaseTest {
         secretKey = new SecretKeySpec(Base64.getDecoder().decode(jwtSecret), "HmacSHA256");
     }
 }
-*/

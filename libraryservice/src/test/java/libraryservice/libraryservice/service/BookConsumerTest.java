@@ -1,5 +1,5 @@
 package libraryservice.libraryservice.service;
-/*
+
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -11,7 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-@DisplayName("Unit Tests for BookConsumer")
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.mockito.junit.jupiter.MockitoExtension;
+
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Test for BookConsumer")
 public class BookConsumerTest {
 
     @Mock
@@ -20,20 +26,20 @@ public class BookConsumerTest {
     @InjectMocks
     private BookConsumer bookConsumer;
 
-
     @Test
-    @DisplayName("Should Handle Delete Book")
-    void testHandleDeleteBook() {
+    @DisplayName("Should handle delete book")
+    void shouldHandleDeleteBook() {
         Long bookId = 1L;
-        BookInfo bookInfo = BookInfo.builder()
-                .bookId(bookId)
-                .build();
+        BookInfo bookInfo = new BookInfo();
+        bookInfo.setBookId(bookId);
+
         when(bookInfoRepository.findByBookId(bookId)).thenReturn(Optional.of(bookInfo));
 
         bookConsumer.handleDeleteBook(bookId);
 
-        verify(bookInfoRepository, times(1)).findByBookId(bookId);
-        verify(bookInfoRepository, times(1)).save(bookInfo);
+        verify(bookInfoRepository).findByBookId(bookId);
+        verify(bookInfoRepository).delete(bookInfo);
     }
 }
-*/
+
+

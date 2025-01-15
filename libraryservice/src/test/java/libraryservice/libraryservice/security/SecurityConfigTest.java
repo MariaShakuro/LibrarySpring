@@ -1,37 +1,32 @@
 package libraryservice.libraryservice.security;
-/*
-import libraryservice.libraryservice.BaseTest;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-@DisplayName("Unit Tests for SecurityConfig")
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class SecurityConfigTest extends BaseTest {
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-    SecurityConfig securityConfig;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Test for SecurityConfig")
+public class SecurityConfigTest {
+
+
+    @Mock
+    private JwtDecoder jwtDecoder;
 
     @Test
-    @DisplayName("Should Create Security Filter Chain")
-    void shouldCreateSecurityFilterChain() {
-        assertDoesNotThrow(() -> securityConfig.securityFilterChain(httpSecurity));
-    }
-
-    @Test
-    @DisplayName("Should Decode JWT")
+    @DisplayName("should decode jwt")
     void shouldDecodeJwt() {
         assertNotNull(jwtDecoder);
     }
-
-
 }
 
-*/

@@ -1,29 +1,40 @@
 package jwtSecurity.example.jwtdemo.config;
-/*
+
 import static org.mockito.Mockito.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jwtSecurity.example.jwtdemo.BaseTest;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith({SpringExtension.class, MockitoExtension.class})
-@SpringBootTest
-@ActiveProfiles("test")
-@DisplayName("Unit Tests for JwtAuthenticationEntryPoint")
-public class JwtAuthenticationEntryPointTest extends BaseTest {
+import org.mockito.Mock;
+
+
+import org.springframework.security.core.AuthenticationException;
+
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Test for JwtAuthenticationEntryPoint ")
+public class JwtAuthenticationEntryPointTest {
 
     @InjectMocks
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpServletResponse response;
+
+    @Mock
+    private AuthenticationException authException;
+
     @Test
-    @DisplayName("Should Commence with Unauthorized Error")
+    @DisplayName("Should commence with unauthorized error")
     void shouldCommenceWithUnauthorizedError() throws Exception {
         String errorMessage = "Unauthorized error";
         when(authException.getMessage()).thenReturn(errorMessage);
@@ -33,4 +44,4 @@ public class JwtAuthenticationEntryPointTest extends BaseTest {
         verify(response, times(1)).sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMessage);
     }
 }
-*/
+

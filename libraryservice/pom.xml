@@ -5,14 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.5</version>
+		<version>3.4.0</version>
 	</parent>
-
 	<groupId>com.example</groupId>
 	<artifactId>libraryservice</artifactId>
 	<version>0.0.1</version>
 	<name>libraryservice</name>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -27,8 +25,8 @@
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
 		<dependency>
-		<groupId>org.apache.kafka</groupId>
-		<artifactId>kafka-clients</artifactId>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -87,12 +85,12 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-		<groupId>org.mapstruct</groupId>
-		<artifactId>mapstruct</artifactId>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
 		</dependency>
 		<dependency>
-		<groupId>org.mapstruct</groupId>
-		<artifactId>mapstruct-processor</artifactId>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -127,7 +125,7 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-		<!-- Logback Classic (реализация SLF4J) -->
+		<!--  Logback Classic (реализация SLF4J)  -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>

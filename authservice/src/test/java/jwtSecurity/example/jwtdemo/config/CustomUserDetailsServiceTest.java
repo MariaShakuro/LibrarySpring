@@ -1,35 +1,37 @@
 package jwtSecurity.example.jwtdemo.config;
-/*
+
 import java.util.Optional;
 import java.util.Set;
 
 import jwtSecurity.example.jwtdemo.model.Role;
 import jwtSecurity.example.jwtdemo.model.User;
 import jwtSecurity.example.jwtdemo.repository.UserRepository;
+
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.GrantedAuthority;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.junit.jupiter.api.DisplayName;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-@ExtendWith({SpringExtension.class, MockitoExtension.class})
-@SpringBootTest
-@ActiveProfiles("test")
-@DisplayName("Unit Tests for CustomUserDetailsService")
+
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Custom user details service test")
 public class CustomUserDetailsServiceTest {
 
     @Mock
@@ -39,37 +41,34 @@ public class CustomUserDetailsServiceTest {
     private CustomUserDetailsService customUserDetailsService;
 
     @Test
-    @DisplayName("Should Load User By Username")
+    @DisplayName("Should load user by username")
     void shouldLoadUserByUsername() {
         String username = "testuser";
-        String password = "testpassword";
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword("testpassword");
 
-        Role roleUser = Role.builder().name("ROLE_USER").build();
+        Role roleUser = new Role();
+        roleUser.setName("ROLE_USER");
         Set<Role> roles = new HashSet<>();
         roles.add(roleUser);
-
-        User user = User.builder()
-                .username(username)
-                .password(password)
-                .roles(roles)
-                .build();
+        user.setRoles(roles);
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
-        assertThat(userDetails.getUsername()).isEqualTo(username);
-        assertThat(userDetails.getPassword()).isEqualTo(password);
-        Set<String> authorities = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-        assertThat(authorities).contains("ROLE_USER");
+        assertEquals(username, userDetails.getUsername());
+        assertEquals("testpassword", userDetails.getPassword());
+        assertTrue(userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER")));
     }
 
     @Test
-    @DisplayName("Should Throw Exception When User Not Found")
+    @DisplayName("Should throw exception when user not found")
     void shouldThrowExceptionWhenUserNotFound() {
         String username = "unknownuser";
+
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> {
@@ -78,4 +77,6 @@ public class CustomUserDetailsServiceTest {
     }
 }
 
-*/
+
+
+

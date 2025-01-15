@@ -1,12 +1,12 @@
 package com.example.library.controller;
 
 import com.example.library.dto.BookDto;
-import com.example.library.entity.Book;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.ReflectionUtils;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import com.example.library.service.BookService;
 import reactor.core.publisher.Mono;
 
-import java.lang.reflect.Field;
+
 import java.util.List;
-import java.util.Map;
+
 import java.util.Optional;
 
 @Slf4j
@@ -54,7 +54,7 @@ public class BookController {
     }
 
     @Operation(summary = "Add a new book", description = "Adds a new book to the library")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping
     Mono<ResponseEntity<?>> addBook(@RequestBody BookDto bookDto) {
         log.info("Adding a new book: {}", bookDto.getName());
@@ -64,7 +64,7 @@ public class BookController {
     }
 
     @Operation(summary = "Update book", description = "Updates the details of an existing book")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PatchMapping("/{id}")
     public ResponseEntity<BookDto> updateBook(@PathVariable("id") Long id, @RequestBody BookDto bookDto) {
         log.info("Updating book with ID: {}", id);
@@ -74,7 +74,7 @@ public class BookController {
     }
 
     @Operation(summary = "Delete book", description = "Deletes a book by its ID")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteBook(@PathVariable("id") Long id) {
         log.info("Deleting book with ID: {}", id);

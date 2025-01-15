@@ -8,7 +8,6 @@ import jwtSecurity.example.jwtdemo.dto.AuthResponseDto;
 import jwtSecurity.example.jwtdemo.dto.LoginDto;
 import jwtSecurity.example.jwtdemo.dto.RegisterDto;
 import jwtSecurity.example.jwtdemo.service.AuthService;
-import jwtSecurity.example.jwtdemo.exception.AccessDeniedException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+
 @Slf4j
 @AllArgsConstructor
 @RestController
@@ -42,9 +42,9 @@ public class AuthController {
     @Operation(summary = "User Registration", description = "Allows a new user to register")
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) {
-            String registeredUser = authService.register(registerDto);
-            log.info("User registered: {}", registeredUser);
-            return new ResponseEntity<>(REGISTRATION_SUCCESS_MESSAGE, HttpStatus.CREATED);
+        String registeredUser = authService.register(registerDto);
+        log.info("User registered: {}", registeredUser);
+        return new ResponseEntity<>(REGISTRATION_SUCCESS_MESSAGE, HttpStatus.CREATED);
 
     }
 
