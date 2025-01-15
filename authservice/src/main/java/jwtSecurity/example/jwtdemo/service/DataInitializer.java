@@ -6,6 +6,7 @@ import jwtSecurity.example.jwtdemo.model.User;
 import jwtSecurity.example.jwtdemo.repository.RoleRepository;
 import jwtSecurity.example.jwtdemo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,28 +26,28 @@ public class DataInitializer {
     RoleRepository roleRepository;
    @Autowired
     UserRepository userRepository;
+   @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
-
+     @Transactional
+     @PostConstruct
     public void init() {
 
         Role adminRole = Role.builder()
-                .id(1L)
                 .name("ROLE_ADMIN")
                 .build();
         roleRepository.save(adminRole);
 
         Role userRole = Role.builder()
-                .id(2L)
                 .name("ROLE_USER")
                 .build();
         roleRepository.save(userRole);
 
         User user = User.builder()
-                .id(1L)
                 .email("masha@gmail.com")
                 .name("masha")
                 .username("shakuro")
-                .password("123456")
+                .password(passwordEncoder.encode("123456"))
                 .build();
         userRepository.save(user);
 
